@@ -19,8 +19,7 @@ import os
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 model = load_model('covid19.model')
-# summarize model.
-#model.summary()
+
 def predict(image):
     
     image = cv2.resize(image, (224,224) )
@@ -56,7 +55,7 @@ def handle_message(data):
 
     image_b64 = data['data']
     image_data = re.sub('^data:image/.+;base64,', '', image_b64)
-    #print(  data['data'] )
+    
     
     im = Image.open(BytesIO(base64.b64decode(image_data)))
 
