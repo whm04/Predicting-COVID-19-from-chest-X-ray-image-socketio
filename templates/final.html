@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+<style>
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 50px;
+  height: 50px;
+  margin-left: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  visibility: hidden;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+
+
+
+    <style> 
+input[type=button], input[type=submit], input[type=reset] {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 0px 0px;
+  padding-left: 20px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+h4 {
+  color: #ADFF2F;
+}
+h4 .name {
+color: #ADFF2F;
+}
+h1 {
+  font-size: 12pt;
+  color: #000066;
+};
+
+</style>
+  </head>
+
+    <BODY>
+      <table>
+        <tr>
+          <td>
+       <form action = "/final" method = "POST" 
+         enctype = "multipart/form-data">
+
+            <input type='file' id="fileUpload" name="file" />
+            <br>
+              <canvas id="canvas" width="400" height="400"></canvas>
+             </td>
+             <tr><td>
+              <input type = "submit" value="predict" id="togglee"  />
+        </form>
+       
+          </td></tr></table>
+      
+      <table> 
+     
+     <tr> <td>   <h2 id="positive" style="color: red"> </h2> </td>
+          <td width="20px"></td>
+          <td><h2 id="normal" style="color: green"> </h2> </td>  
+      </tr>
+
+      <tr> <td> <p id="p" style="visibility: hidden;"><font size="20" >positive</font></p> </td>
+          <td width="10px"></td>
+          <td><p id="n" style="visibility: hidden;"><font size="20" >normal</font></td>  
+      </tr>
+
+      </table> 
+       
+        
+      
+       <div class="loader" id="loader"></div>
+          
+   
+ 
+    
+
+<script type="text/javascript">
+
+
+
+function el(id){return document.getElementById(id);} // Get elem by ID
+
+var canvas  = el("canvas");
+var context = canvas.getContext("2d");
+document.getElementById('togglee').style.visibility = 'hidden';
+function readImage() {
+    
+    document.getElementById("p").style.visibility = 'hidden';
+    document.getElementById("n").style.visibility = 'hidden';
+
+     document.getElementById("positive").innerHTML  = "";
+            document.getElementById("normal").innerHTML  = "";
+    if ( this.files && this.files[0] ) {  
+      //document.getElementById('togglee').style.visibility = 'visible';
+        var FR= new FileReader();
+        FR.onload = function(e) {
+           var img = new Image();
+           img.addEventListener("load", function() {
+             context.drawImage(img, 0, 0,400,400);
+           });
+           img.src = e.target.result;
+
+              
+              document.getElementById('loader').style.visibility = 'visible';
+                
+                           namespace = '/test';
+                        var socket = io(namespace);
+
+                
+                socket.on('connect', function() 
+                {
+                     //socket.emit('my event', {data: c.toDataURL()});
+                     socket.emit('my event', {data: img.src}); 
+
+                });
+
+                namespace = '/test';
+            var socket = io(namespace);
+      socket.on('log', function(payload) 
+          {
+               document.getElementById('loader').style.visibility = 'hidden';
+               document.getElementById("p").style.visibility = 'visible';
+    document.getElementById("n").style.visibility = 'visible';
+              document.getElementById("positive").innerHTML  = ""+payload.data;
+            document.getElementById("normal").innerHTML  = ""+payload.d;
+
+         }) ;
+
+
+           
+           
+        };       
+        FR.readAsDataURL( this.files[0] );
+    }
+}
+
+
+el("fileUpload").addEventListener("change", readImage, false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+ </script>
+
+   
+   
+
+
+
+
+   
+  
+
+
+   
+
+
+
+
+
+
+
+    </BODY>
+</HTML>
