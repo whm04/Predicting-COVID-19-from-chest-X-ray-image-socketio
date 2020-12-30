@@ -35,11 +35,11 @@ def predict(image):
 app = Flask(__name__)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-app.config['SECRET_KEY'] = 'secret123456789'
+app.config['SECRET_KEY'] = '*************'
 socketio = SocketIO(app)
 
 
-#run_with_ngrok(app)
+
 
 @app.route('/', methods=['post', 'get'])
 def login():
@@ -68,36 +68,5 @@ def handle_message(data):
     emit('log', dict(data=str(positive),d=str(negative)), broadcast=True)
     
 
-##
-##@socketio.on('my event', namespace='/test')
-##def handle_message(data):
-##    receive = data['data']
-##    emit('log', payload, broadcast=True)
-
-
-
-@app.route('/final', methods = ['GET', 'POST'])
-def upload_file():
-    
-
-    positive="20"
-    negative = "20"
-    
-    if request.method == 'POST':
-        
-        f = request.files['file']
-
-        image = cv2.imdecode(np.frombuffer(f.stream.read() , np.uint8), -1)
-        
-
-
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        positive,negative=predict(image)    
-      
-
-
-     
-    #return render_template('predict.html',positive=positive,negative=negative,user_image="static/a.jpg")
-    #return render_template('final.html')
     
 socketio.run(app,debug=True)
